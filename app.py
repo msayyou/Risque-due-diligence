@@ -176,15 +176,15 @@ D = st.session_state.get('prefill', SEG_DEFAULTS[segment])
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
 t1, t2, t3, t4, t5, t6, t7, t8, t9 = st.tabs([
-    "📊 Tableau de bord",
+    "📊 Dashboard",
     "⚙️ Opérationnel",
     "💰 Financier",
     "🌍 Marché",
     "🛡️ Résilience",
-    "🏷️ Marque & Franchise",
-    "⚖️ Légal & Réglementaire",
+    "🏷️ Franchise",
+    "⚖️ Légal",
     "🧨 Stress Test",
-    "📐 Risk Management",
+    "📐 Risk Mgmt",
 ])
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1440,11 +1440,11 @@ with t9:
         st.caption("P10 = scénario pessimiste · P50 = centrale · P90 = scénario optimiste")
 
         vars_config = [
-            ("Taux occupation (%)", "occ",     0,   100, "%"),
-            ("ADR (€/nuit)",        "adr",     10,  2000,"€"),
-            ("Coûts opéra. (€/ch)", "opcost",  5,   500, "€"),
-            ("Cap Rate (%)",        "caprate", 0.5, 15,  "%"),
-            ("Redevances (% CA)",   "fee_pct", 0,   25,  "%"),
+            ("Taux occupation (%)", "occ",     0.0,  100.0, "%"),
+            ("ADR (€/nuit)",        "adr",     10.0, 2000.0,"€"),
+            ("Coûts opéra. (€/ch)", "opcost",  5.0,  500.0, "€"),
+            ("Cap Rate (%)",        "caprate", 0.5,  15.0,  "%"),
+            ("Redevances (% CA)",   "fee_pct", 0.0,  25.0,  "%"),
         ]
 
         pert_params = {}
@@ -1453,16 +1453,16 @@ with t9:
             with c1:
                 st.markdown(f"<div style='padding-top:8px;font-size:13px'>{label}</div>", unsafe_allow_html=True)
             with c2:
-                p10 = st.number_input(f"P10", vmin, vmax, float(P[key]["p10"]),
-                                      key=f"p10_{key}", label_visibility="collapsed",
+                p10 = st.number_input(f"P10", float(vmin), float(vmax), float(P[key]["p10"]),
+                                      step=0.1, key=f"p10_{key}", label_visibility="collapsed",
                                       help=f"P10 — {label}")
             with c3:
-                p50 = st.number_input(f"P50", vmin, vmax, float(P[key]["p50"]),
-                                      key=f"p50_{key}", label_visibility="collapsed",
+                p50 = st.number_input(f"P50", float(vmin), float(vmax), float(P[key]["p50"]),
+                                      step=0.1, key=f"p50_{key}", label_visibility="collapsed",
                                       help=f"P50 — {label}")
             with c4:
-                p90 = st.number_input(f"P90", vmin, vmax, float(P[key]["p90"]),
-                                      key=f"p90_{key}", label_visibility="collapsed",
+                p90 = st.number_input(f"P90", float(vmin), float(vmax), float(P[key]["p90"]),
+                                      step=0.1, key=f"p90_{key}", label_visibility="collapsed",
                                       help=f"P90 — {label}")
             pert_params[key] = {"p10": p10, "p50": p50, "p90": p90}
 
