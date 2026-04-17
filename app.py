@@ -76,9 +76,9 @@ def compute_scores(d):
     res = min(100, round(((d['esg'] + d['digi'] + (10-d['hr']) + d['ins'] + d['div']) / 50) * 100))
 
     # CORRECTION 2 — Cohérence LTV vs dette totale réelle
-    # Si l'utilisateur saisit une dette totale, on vérifie que le LTV déclaré
-    # est cohérent avec asset_val. Écart > 15pts = incohérence signalée.
-    ltv_reel = round(d['total_debt'] / asset_val * 100, 1) if asset_val > 0 else None
+    # Accès sécurisé à total_debt — peut être absent si onglet financier pas encore visité
+    total_debt_v = d.get('total_debt', 0) or 0
+    ltv_reel = round(total_debt_v / asset_val * 100, 1) if (asset_val > 0 and total_debt_v > 0) else None
     ltv_incoherence = (
         ltv_reel is not None and
         abs(ltv_reel - d['ltv']) > 15
@@ -393,6 +393,7 @@ try:
     data = dict(
         occ=occ, adr=adr, rooms=rooms, opcost=opcost,
         noi=noi, caprate=caprate, ltv=ltv, dscr=dscr,
+        total_debt=total_debt, capex=capex, loan_years=loan_years,
         season=season, newcomp=newcomp, intl=intl, loc=loc,
         esg=esg, digi=digi, hr=hr, ins=ins, div=div,
         brand_mode=brand_mode, brand_strength=brand_strength,
@@ -408,6 +409,7 @@ except NameError:
     data = dict(
         occ=D['occ'], adr=D['adr'], rooms=D['rooms'], opcost=D['opcost'],
         noi=D['noi'], caprate=D['caprate'], ltv=D['ltv'], dscr=D['dscr'],
+        total_debt=0, capex=0, loan_years=15,
         season=D['season'], newcomp=D['newcomp'], intl=D['intl'], loc=D['loc'],
         esg=D['esg'], digi=D['digi'], hr=D['hr'], ins=D['ins'], div=D['div'],
         brand_mode=D['brand_mode'], brand_strength=D['brand_strength'],
@@ -482,7 +484,7 @@ with t1:
     if C['goppar_negatif']:
         flags.append(("red", "🚨 EXPLOITATION À PERTE — GOPPAR négatif : coûts opérationnels > RevPAR. Score opérationnel bloqué à 0. Revoir immédiatement la structure de coûts."))
     if C['ltv_incoherence']:
-        flags.append(("red", f"⚠️ INCOHÉRENCE LTV — LTV déclaré {data['ltv']}% / LTV réel calculé {C['ltv_reel']}% (dette {data['total_debt']}k€ / valeur actif {C['asset_val']}k€). Écart >15pts — vérifier les données saisies."))
+        flags.append(("red", f"⚠️ INCOHÉRENCE LTV — LTV déclaré {data['ltv']}% / LTV réel calculé {C['ltv_reel']}% (dette {data.get('total_debt',0)}k€ / valeur actif {C['asset_val']}k€). Écart >15pts — vérifier les données saisies."))
     if data['legal_dpe'] in ['E','F','G']:
         flags.append(("red", f"🚨 DPE {data['legal_dpe']} — Interdiction d'exploitation progressive (G: 2025, F: 2028, E: 2034). Rénovation énergétique impérative. Ce risque pèse 30% du score légal."))
     # ── ALERTES STANDARD ─────────────────────────────────────────────────
