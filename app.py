@@ -177,12 +177,12 @@ D = st.session_state.get('prefill', SEG_DEFAULTS[segment])
 # ── Tabs ──────────────────────────────────────────────────────────────────────
 t1, t2, t3, t4, t5, t6, t7, t8, t9 = st.tabs([
     "Dashboard",
-    "Opérationnel",
+    "Operationnel",
     "Financier",
-    "Marché",
-    "Résilience",
+    "Marche",
+    "Resilience",
     "Franchise",
-    "Légal",
+    "Legal",
     "Stress Test",
     "Risk Mgmt",
 ])
@@ -473,7 +473,8 @@ with t1:
     m3.metric("Marge GOP", f"{C['gop_ratio']}%")
     m4.metric("LTV", f"{data['ltv']}%")
     m5.metric("DSCR", f"{data['dscr']:.1f}x")
-    m6.metric("Valeur actif", f"{C['asset_val']:,}k€")
+    val_disp = f"{C['asset_val']/1000:.1f}M€" if C['asset_val'] >= 1000 else f"{int(C['asset_val'])}k€"
+    m6.metric("Valeur actif", val_disp)
 
     st.divider()
 
