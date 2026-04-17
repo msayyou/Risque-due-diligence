@@ -165,8 +165,12 @@ with st.sidebar:
     usage_mode = st.selectbox("Mode d'usage", ["Acquisition / Entrée", "Actif existant — suivi AM", "Les deux"])
 
     st.divider()
-    if st.button("🔄 Pré-remplir valeurs types (segment)", use_container_width=True):
-        st.session_state['prefill'] = SEG_DEFAULTS[segment]
+    if st.button("Prefill valeurs types (segment)", use_container_width=True):
+        d = SEG_DEFAULTS[segment]
+        # Écrire directement dans les clés widget pour forcer la mise à jour
+        for key, val in d.items():
+            st.session_state[key] = val
+        st.session_state['prefill'] = d
         st.rerun()
 
     st.caption(f"Généré le {datetime.today().strftime('%d/%m/%Y')}")
@@ -175,16 +179,14 @@ with st.sidebar:
 D = st.session_state.get('prefill', SEG_DEFAULTS[segment])
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
-t1, t2, t3, t4, t5, t6, t7, t8, t9 = st.tabs([
+t1, t2, t3, t4, t5, t6, t7 = st.tabs([
     "Dashboard",
     "Operationnel",
     "Financier",
     "Marche",
     "Resilience",
-    "Franchise",
-    "Legal",
-    "Stress Test",
-    "Risk Mgmt",
+    "Franchise & Legal",
+    "Risk & Stress",
 ])
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -285,7 +287,7 @@ with t5:
 # ════════════════════════════════════════════════════════════════════════════
 # TAB 6 — MARQUE & FRANCHISE
 # ════════════════════════════════════════════════════════════════════════════
-with t6:
+with t6:  # Franchise
     st.markdown("## Risque marque & contrat de franchise")
     st.info("Cette dimension évalue l'exposition liée au mode d'exploitation : indépendant, franchise ou contrat de gestion.")
 
@@ -330,10 +332,8 @@ with t6:
     }
     st.table(franchise_risks)
 
-# ════════════════════════════════════════════════════════════════════════════
-# TAB 7 — LÉGAL & RÉGLEMENTAIRE
-# ════════════════════════════════════════════════════════════════════════════
-with t7:
+# ── LÉGAL & RÉGLEMENTAIRE (fusionné dans t6) ─────────────────────────────────
+with t6:
     st.markdown("## Risque légal & réglementaire")
     st.warning("⚡ Le cadre réglementaire hôtelier français s'est fortement durci en 2025-2026. Affichage environnemental obligatoire dès 2026, DPE opposable, RGPD étendu aux PME.")
 
@@ -984,9 +984,9 @@ with t1:
             )
 
 # ════════════════════════════════════════════════════════════════════════════
-# TAB 8 — STRESS TEST
+# TAB 7 — STRESS TEST + RISK MGMT
 # ════════════════════════════════════════════════════════════════════════════
-with t8:
+with t7:
     st.markdown("## Stress Test — Simulation de scénarios")
     st.info("Simulez l'impact de chocs de marché sur la performance et le score de risque de l'actif. Tout se recalcule en temps réel.")
 
@@ -1115,10 +1115,8 @@ with t8:
     st.markdown("---")
     st.caption("💡 Les scénarios prédéfinis sont calibrés sur des chocs sectoriels historiques. Utilisez les sliders pour construire votre propre hypothèse de stress.")
 
-# ════════════════════════════════════════════════════════════════════════════
-# TAB 9 — RISK MANAGEMENT (Heatmap + Sensibilité + Monte Carlo PERT)
-# ════════════════════════════════════════════════════════════════════════════
-with t9:
+# ── RISK MANAGEMENT (suite de t7) ───────────────────────────────────────────
+with t7:
     import numpy as np
     import pandas as pd
 
@@ -1439,6 +1437,16 @@ with t9:
 
         st.markdown("#### Paramètres de marché local — P10 / P50 / P90")
         st.caption("P10 = scénario pessimiste · P50 = centrale · P90 = scénario optimiste")
+        st.info("""
+**Comment remplir ces valeurs ?**
+Basez-vous sur votre connaissance terrain du marché local (ville, segment, saison) :
+- **P10** : ce que vous observez dans les 10% de cas les plus défavorables — creux de saison, crise ponctuelle
+- **P50** : votre meilleure estimation de la performance normale de ce marché
+- **P90** : performance dans les 10% de cas les plus favorables — haute saison, événement exceptionnel
+
+*Exemple Nice Côte d'Azur — Haut de gamme — Été :*
+Taux occupation P10=62% · P50=74% · P90=85% | ADR P10=180€ · P50=220€ · P90=280€
+        """)
 
         vars_config = [
             ("Taux occupation (%)", "occ",     0.0,  100.0, "%"),
