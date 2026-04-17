@@ -1150,9 +1150,9 @@ with t9:
     st.caption("Heatmap probabilité × impact · Sensibilité NOI · Monte Carlo PERT sur valeur actif")
 
     rm1, rm2, rm3 = st.tabs([
-        "🗺️ Heatmap risques",
-        "🌪️ Sensibilité NOI",
-        "🎲 Monte Carlo & VaR",
+        "Heatmap risques",
+        "Sensibilité NOI",
+        "Monte Carlo & VaR",
     ])
 
     # ─────────────────────────────────────────────────────────────────────
