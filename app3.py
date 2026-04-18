@@ -1428,7 +1428,7 @@ Basez-vous sur votre connaissance terrain du marché local (ville, segment, sais
 Taux occupation P10=62% · P50=74% · P90=85% | ADR P10=180€ · P50=220€ · P90=280€""")
 
         vars_config = [
-            ("Taux occupation (%)", "
+            ("Taux occupation (%)", "…")
             ("Taux occupation (%)", "occ",     0.0,  100.0, "%"),
             ("ADR (€/nuit)",        "adr",     10.0, 2000.0,"€"),
             ("Coûts opéra. (€/ch)", "opcost",  5.0,  500.0, "€"),
